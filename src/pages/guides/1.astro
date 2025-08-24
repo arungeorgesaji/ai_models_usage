@@ -1,0 +1,81 @@
+---
+import '../../styles/guide.css'
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YOLOv8 Documentation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</head>
+<body>
+    <section>
+        <h1>YOLOv8</h1>
+        <p>
+            YOLOv8 is a state-of-the-art object detection model by <strong>Ultralytics</strong> 
+            that excels in real-time applications. Known for its <em>speed</em> and <em>accuracy</em>, its widely used in tasks like <strong>surveillance, autonomous driving, and robotics</strong>.
+        </p>
+
+        <h2>Model Variants</h2>
+        <p>YOLOv8 comes in multiple sizes to balance speed and accuracy:</p>
+        <ul>
+            <li><strong>YOLOv8n</strong> - Nano (fastest, lowest accuracy)</li>
+            <li><strong>YOLOv8s</strong> - Small</li>
+            <li><strong>YOLOv8m</strong> - Medium</li>
+            <li><strong>YOLOv8l</strong> - Large</li>
+            <li><strong>YOLOv8x</strong> - XLarge (slowest, highest accuracy)</li>
+        </ul>
+        <p>Each variant is available as a pre-trained model (e.g., <code>yolov8n.pt</code>, <code>yolov8s.pt</code>, etc.).</p>
+
+        <h2>Basic Usage</h2>
+        <p>Run inference on an image using a pre-trained model:</p>
+
+        <pre><code class="language-python">from ultralytics import YOLO
+
+# Load a pre-trained model
+model = YOLO("yolov8m.pt")
+
+# Run prediction on an image
+results = model.predict("image.png")
+</code></pre>
+        <p>This will load the medium-sized YOLOv8 model and predict objects in <code>image.png</code>.</p>
+
+        <h2>Fine-Tuning YOLOv8</h2>
+        <p>You can fine-tune YOLOv8 on your custom dataset, for example detecting underwater plastics:</p>
+
+        <pre><code class="language-python">from ultralytics import YOLO
+
+model = YOLO("yolov8m.pt")  # Load pretrained YOLOv8 model
+
+results = model.train(
+    data="/kaggle/input/underwater-plastic-pollution-detection/underwater_plastics/data.yaml",
+    epochs=120,
+    batch=16,
+    imgsz=640,
+    device="0",
+    name="yolov8m_plastic_v1",
+    patience=20,
+    lr0=0.01,
+    hsv_h=0.1,
+    hsv_s=0.7,
+)</code></pre>
+
+        <h3>Explanation of Parameters</h3>
+        <ul>
+            <li><code>data</code>: Path to the dataset YAML file (train/val paths + class names).</li>
+            <li><code>epochs</code>: Number of training iterations (higher = longer training).</li>
+            <li><code>batch</code>: Number of images per batch during training.</li>
+            <li><code>imgsz</code>: Input image resolution (default is 640).</li>
+            <li><code>device</code>: Which GPU/CPU to use. <code>"0"</code> = first GPU, <code>"cpu"</code> = CPU only.</li>
+            <li><code>name</code>: The experiment name (used for saving weights).</li>
+            <li><code>patience</code>: Early stopping patience (# of epochs with no improvement before stopping).</li>
+            <li><code>lr0</code>: Initial learning rate.</li>
+            <li><code>hsv_h</code>, <code>hsv_s</code>: Data augmentation settings (color hue/saturation changes).</li>
+        </ul>
+    </section>
+</body>
+</html>

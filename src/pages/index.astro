@@ -1,0 +1,117 @@
+---
+import '../styles/index.css';
+
+const aiModels = [
+  {
+    id: 1,
+    title: "Yolov8",
+    description: "Yolov8 is a state-of-the-art object detection model that excels in real-time applications. It is known for its speed and accuracy, making it suitable for various tasks such as surveillance, autonomous driving, and robotics.",
+    tags: ["Local AI"],
+  },
+];
+---
+
+<div class="container">
+  <header>
+    <h1 class="logo">AI Models Usage</h1>
+    <p class="subtitle">Your comprehensive guide to popular AI models, their capabilities, and implementation examples</p>
+  </header>
+
+  <section class="search-section">
+    <div class="search-container">
+      <input type="text" class="search-input" placeholder="Search AI models..." id="searchInput" />
+    </div>
+    <div class="filter-tags">
+      <span class="tag active" data-category="all">All Models</span>
+      <span class="tag" data-category="API Based">API Based</span>
+      <span class="tag" data-category="Local AI">Local AI</span>
+    </div>
+  </section>
+
+  <section class="models-grid" id="modelsGrid">
+    {aiModels.map(model => (
+      <div class="model-card" data-category={model.tags.join(' ')}>
+        <h3 class="model-title">{model.title}</h3>
+        <p class="model-description">{model.description}</p>
+        <div class="model-tags">
+          {model.tags.map(tag => (
+            <span class="model-tag">{tag}</span>
+          ))}
+        </div>
+
+        <div class="model-actions">
+          <a href={`/ai_models_usage/guides/${model.id}`} class="btn btn-primary">Guide</a>
+        </div>
+      </div>
+    ))}
+  </section>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('searchInput');
+    const modelsGrid = document.getElementById('modelsGrid');
+    const filterTags = document.querySelectorAll('.tag');
+    const modelCards = document.querySelectorAll('.model-card');
+    
+    let currentCategory = 'all';
+    
+    modelCards.forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        card.style.transform = 'translateY(-10px) scale(1.02)';
+      });
+      
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'translateY(0) scale(1)';
+      });
+    });
+    
+    searchInput.addEventListener('input', (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+      filterModels(searchTerm, currentCategory);
+    });
+    
+    filterTags.forEach(tag => {
+      tag.addEventListener('click', (e) => {
+        filterTags.forEach(t => t.classList.remove('active'));
+        e.target.classList.add('active');
+        
+        currentCategory = e.target.getAttribute('data-category');
+        const searchTerm = searchInput.value.toLowerCase();
+        filterModels(searchTerm, currentCategory);
+      });
+    });
+    
+    function filterModels(searchTerm, category) {
+      modelCards.forEach(card => {
+        const title = card.querySelector('.model-title').textContent.toLowerCase();
+        const description = card.querySelector('.model-description').textContent.toLowerCase();
+        const categories = card.getAttribute('data-category');
+        
+        const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
+        const matchesCategory = category === 'all' || categories.includes(category);
+        
+        if (matchesSearch && matchesCategory) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+    
+    setTimeout(() => {
+      modelCards.forEach((card, index) => {
+        setTimeout(() => {
+          card.style.opacity = '0';
+          card.style.transform = 'translateY(20px)';
+          card.style.transition = 'all 0.6s ease';
+          
+          setTimeout(() => {
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+          }, 100);
+        }, index * 100);
+      });
+    }, 100);
+  });
+</script>
